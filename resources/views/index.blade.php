@@ -36,6 +36,7 @@
 		      	<tr>
 		          	<th>Name</th>
 		          	<th>Vendor</th>
+		          	<th>Action</th>
 		      	</tr>
 		  	</thead>
 		  	<tbody>
@@ -45,13 +46,14 @@
 		      	<tr>
 		          	<th>Name</th>
 		          	<th>Vendor</th>
+		          	<th>Action</th>
 		      	</tr>
 		  	</tfoot>
 		</table>
 	</div>
 <script type="text/javascript">
 	$(document).ready(function(){
-		$('#products_table').DataTable({
+		var products_grid = $('#products_table').DataTable({
 		    "processing": true,
 		    "responsive": true,
 		    "serverSide": true,
@@ -72,6 +74,18 @@
 		        },
 		        {
 		            data: 'productVendor'
+		        },
+		        {
+		        	"render": function (data, type, full, meta) {
+		        		var div_update_button = '<div class="btn-group-vertical btn-block">\n\
+                                                <button type="button" class="btn btn-warning btn-xs btn-block" id="update_row_' + 
+                                                full.productCode + '_btn"\n\
+                                                data-toggle="modal" \n\
+                                                data-target="#modal_update_row">Update</button>\n\
+                                        </div>';
+
+                        return div_update_button;
+                    }
 		        }
 		    ],
 		    buttons: [
@@ -103,7 +117,56 @@
 		            }
 		    ]
 		});
+
+		$('#products_table tbody').on( 'click', 'button', function () {
+			var data = null;
+
+			//check if the row has not gone one line below in case of shrinking the table 
+            if(typeof products_grid.row( $(this).closest('tr') ).data() !== 'undefined'){
+                data = products_grid.row( $(this).closest('tr') ).data();
+            }else{
+                data = products_grid.row( $(this).closest('tr').prev() ).data();
+            }
+
+            //populate the input fields
+            $('#update_product_name').val(data.productName);
+            $('#update_product_vendor').val(data.productVendor);
+            $('#update_product_code').val(data.productCode);
+		});			
 	});
 </script>
+
+<div id="modal_update_row" class="modal fade" role="dialog">
+  	<div class="modal-dialog">
+  		<form name="update_product_form" id="update_product_form" action="/updateProduct" method="POST">
+  			@php echo csrf_field(); @endphp
+	    	<div class="modal-content">
+		      	<div class="modal-header">
+		        	<button type="button" class="close" data-dismiss="modal">&times;</button>
+		        	<h4 class="modal-title">Update Data</h4>
+		      	</div>
+			    <div class="modal-body">
+			      		<div class="form-group">
+			            	<!-- PRODUCT NAME -->
+		            	 	<label for="update_product_name" class="col-lg-8 control-label">Product Name</label>
+			                <input type="text" name="update_product_name" required id="update_product_name" class="form-control">
+			            </div>
+			            <div class="form-group">
+				            <!-- PRODUCT VENDOR -->
+			             	<label for="update_product_vendor" class="col-lg-8 control-label">Product Vendor</label>
+			                <input type="text" name="update_product_vendor" id="update_product_vendor" class="form-control" data-track-changes>
+			        	</div>
+			        	{{-- HIDDEN FIELD WITH THE PRODUCT CODE NECESSARY FOR UPDATING --}}
+			        	<input type="hidden" id="update_product_code" name="update_product_code">
+		      	</div>
+		      	<div class="modal-footer">
+		        	<button type="submit" class="btn btn-primary" id="submit_button_id">Update</button>
+		          	<button type="button" id="close_button_id" class="btn btn-warning" data-dismiss="modal">Cancel</button>
+	      		</div>
+	    	</div>
+    	</form>
+  	</div>
+</div>
+
 </body>
 </html>

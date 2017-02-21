@@ -69,4 +69,9 @@ class DTController extends Controller
 
     	return json_encode($products);
     }
+
+    public function updateProduct(Request $request){
+        dd($request->all());
+        //return; 
+    }
 }

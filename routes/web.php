@@ -18,7 +18,6 @@ Route::get('/', function () {
 Route::get('/index', 'DTController@index');
 
 Route::post('/fetchProducts', 'DTController@fetchProducts');
-/*Route::get('/index', function(){
-	return view('index');
-});*/
+
+Route::post('/updateProduct', 'DTController@updateProduct');
 
