@@ -31,6 +31,11 @@
 </head>
 <body>
 	<div class="container" style="margin: 30px;">
+		@if(session()->has('status'))
+			<div class="alert alert-success">
+				{{session('status')}}
+			</div>
+		@endif
 		<table id="products_table" class="table table-bordered table-hover table-striped table-responsive" width="100%">
 			<thead>
 		      	<tr>

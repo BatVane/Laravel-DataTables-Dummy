@@ -71,7 +71,11 @@ class DTController extends Controller
     }
 
     public function updateProduct(Request $request){
-        dd($request->all());
-        //return; 
+
+        DB::table('products')->where('productCode','=', $request->get('update_product_code'))
+                                ->update(['productName' => $request->get('update_product_name'),
+                                    'productVendor' => $request->get('update_product_vendor')]);
+
+        return redirect('/index')->with('status','Successfully updated !');
     }
 }
